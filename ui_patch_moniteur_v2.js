@@ -351,3 +351,713 @@ if(!init()){
   setTimeout(()=>wait.disconnect(),15000);
 }
 })();
+/* ============================================================
+   AIRE GENESIS — HOTFIX MONDE V3
+   Environnement + caméra centrée sur Alpha + français
+   ============================================================ */
+
+(() => {
+  "use strict";
+
+  if (window.AIRE_MONDE_V3) return;
+  window.AIRE_MONDE_V3 = true;
+
+  const world = document.getElementById("world");
+  if (!world) return;
+
+  const style = document.createElement("style");
+
+  style.textContent = `
+    #aire-scene-v3{
+      position:absolute;
+      inset:-35%;
+      z-index:1;
+      overflow:hidden;
+
+      background:
+        linear-gradient(#ffffff09 1px,transparent 1px),
+        linear-gradient(90deg,#ffffff09 1px,transparent 1px),
+        radial-gradient(circle at 50% 50%,#17465655,transparent 60%),
+        linear-gradient(150deg,#081923,#123544);
+
+      background-size:
+        28px 28px,
+        28px 28px,
+        100% 100%,
+        100% 100%;
+
+      transform:
+        perspective(520px)
+        rotateX(48deg)
+        scale(1.05);
+
+      transform-origin:center;
+      transition:transform .12s linear;
+    }
+
+    #aire-scene-v3:after{
+      content:"";
+      position:absolute;
+      inset:18% 8% 8%;
+      border:1px solid #62e0c220;
+      border-radius:28px;
+      background:#62e0c205;
+      pointer-events:none;
+    }
+
+    .aire-decoration-v3{
+      position:absolute;
+      width:38px;
+      height:16px;
+      border-radius:50%;
+      background:#1b4a52aa;
+      border:1px solid #62e0c218;
+      box-shadow:0 3px 5px #0005;
+    }
+
+    .aire-object-v3{
+      position:absolute;
+      width:18px;
+      height:18px;
+      border-radius:5px;
+
+      background:
+        linear-gradient(
+          145deg,
+          #e6c17a,
+          #a8793f
+        );
+
+      box-shadow:
+        0 5px 8px #0009,
+        0 0 8px #e6c17a33;
+
+      transform:
+        translate(-50%,-50%)
+        rotate(45deg);
+
+      z-index:4;
+    }
+
+    .aire-object-v3:after{
+      content:"";
+      position:absolute;
+      width:6px;
+      height:6px;
+      left:3px;
+      top:3px;
+      border-radius:2px;
+      background:#ffffff55;
+    }
+
+    #aire-alpha-v3{
+      position:absolute;
+      left:50%;
+      top:58%;
+
+      width:52px;
+      height:76px;
+
+      transform:
+        translate(-50%,-50%);
+
+      z-index:20;
+      pointer-events:none;
+
+      filter:
+        drop-shadow(0 7px 8px #0009);
+    }
+
+    #aire-alpha-v3 .head{
+      position:absolute;
+
+      left:13px;
+      top:0;
+
+      width:26px;
+      height:29px;
+
+      border:
+        2px solid #d8e3e5;
+
+      border-radius:
+        10px 10px 9px 9px;
+
+      background:
+        linear-gradient(
+          145deg,
+          #121c21,
+          #05090b
+        );
+
+      box-shadow:
+        0 0 14px #62e0c255;
+    }
+
+    #aire-alpha-v3 .head:after{
+      content:"";
+
+      position:absolute;
+
+      left:6px;
+      top:11px;
+
+      width:12px;
+      height:4px;
+
+      border-radius:5px;
+
+      background:#62e0c2;
+
+      box-shadow:
+        0 0 10px currentColor;
+    }
+
+    #aire-alpha-v3 .body{
+      position:absolute;
+
+      left:10px;
+      top:27px;
+
+      width:32px;
+      height:36px;
+
+      border-radius:
+        11px 11px 13px 13px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #eef2f2,
+          #89999e 55%,
+          #27343a
+        );
+
+      border:
+        1px solid #dbe6e677;
+    }
+
+    #aire-alpha-v3 i{
+      position:absolute;
+
+      width:8px;
+      height:20px;
+
+      border-radius:6px;
+
+      background:#26343a;
+    }
+
+    #aire-alpha-v3 .l1{
+      left:3px;
+      top:31px;
+      transform:rotate(12deg);
+    }
+
+    #aire-alpha-v3 .r1{
+      right:3px;
+      top:31px;
+      transform:rotate(-12deg);
+    }
+
+    #aire-alpha-v3 .l2{
+      left:13px;
+      top:60px;
+    }
+
+    #aire-alpha-v3 .r2{
+      right:13px;
+      top:60px;
+    }
+
+    #aire-alpha-v3.alert .head:after{
+      background:#ff5d72;
+    }
+
+    #aire-alpha-v3.tired .head:after{
+      background:#ffc86b;
+    }
+
+    #aire-alpha-v3.action .head:after{
+      background:#8bb7ff;
+    }
+
+    #aire-alpha-label-v3{
+      position:absolute;
+
+      left:50%;
+      top:44%;
+
+      transform:
+        translate(-50%,-100%);
+
+      z-index:21;
+
+      padding:
+        4px 8px;
+
+      border:
+        1px solid #62e0c255;
+
+      border-radius:99px;
+
+      background:#071018dd;
+
+      color:#62e0c2;
+
+      font:
+        700 9px monospace;
+
+      pointer-events:none;
+    }
+  `;
+
+  document.head.appendChild(style);
+
+
+  /* ------------------------------------------------------------
+     Création du nouveau monde
+     ------------------------------------------------------------ */
+
+  function createWorld(){
+
+    world.innerHTML = "";
+
+    const scene =
+      document.createElement("div");
+
+    scene.id =
+      "aire-scene-v3";
+
+    world.appendChild(scene);
+
+
+    /* Décor léger */
+
+    for(let i=0;i<7;i++){
+
+      const d =
+        document.createElement("div");
+
+      d.className =
+        "aire-decoration-v3";
+
+      d.style.left =
+        (8 + i * 14) + "%";
+
+      d.style.top =
+        (25 + (i % 3) * 24) + "%";
+
+      scene.appendChild(d);
+    }
+
+
+    /* Alpha */
+
+    const alpha =
+      document.createElement("div");
+
+    alpha.id =
+      "aire-alpha-v3";
+
+    alpha.innerHTML =
+      '<div class="head"></div>' +
+      '<div class="body"></div>' +
+      '<i class="l1"></i>' +
+      '<i class="r1"></i>' +
+      '<i class="l2"></i>' +
+      '<i class="r2"></i>';
+
+    world.appendChild(alpha);
+
+
+    const label =
+      document.createElement("div");
+
+    label.id =
+      "aire-alpha-label-v3";
+
+    label.textContent =
+      "ALPHA";
+
+    world.appendChild(label);
+  }
+
+
+  createWorld();
+
+
+  /* ------------------------------------------------------------
+     Traduction
+     ------------------------------------------------------------ */
+
+  function traduireAction(action){
+
+    const a =
+      String(action || "")
+      .toLowerCase();
+
+    if(a.includes("grasp"))
+      return "Saisie";
+
+    if(a.includes("release"))
+      return "Relâchement";
+
+    if(a.includes("intake"))
+      return "Absorption";
+
+    if(a.includes("push"))
+      return "Poussée";
+
+    if(a.includes("move"))
+      return "Déplacement";
+
+    if(a.includes("rest"))
+      return "Repos";
+
+    if(a.includes("observe"))
+      return "Observation";
+
+    return action || "Observation";
+  }
+
+
+  function traduireCommandes(){
+
+    const buttons =
+      document.querySelectorAll(
+        ".commands button"
+      );
+
+    const labels = [
+
+      "→ Droite",
+      "← Gauche",
+
+      "↑ Avant",
+      "↓ Arrière",
+
+      "↥ Haut",
+
+      "Absorber",
+      "Pousser",
+      "Saisir",
+      "Relâcher"
+    ];
+
+    buttons.forEach((button,i)=>{
+
+      if(labels[i])
+        button.textContent =
+          labels[i];
+    });
+
+
+    const action =
+      document.getElementById("action");
+
+    if(action){
+
+      action.dataset.original =
+        action.textContent;
+
+      action.textContent =
+        traduireAction(
+          action.dataset.original
+        );
+    }
+  }
+
+
+  /* ------------------------------------------------------------
+     Rendu du monde
+     ------------------------------------------------------------ */
+
+  window.drawWorld =
+    function(s){
+
+      const scene =
+        document.getElementById(
+          "aire-scene-v3"
+        );
+
+      const alpha =
+        document.getElementById(
+          "aire-alpha-v3"
+        );
+
+      if(!scene || !alpha || !s)
+        return;
+
+
+      /*
+       * IMPORTANT :
+       *
+       * Alpha reste au centre.
+       * Les objets sont dessinés relativement
+       * à sa position.
+       */
+
+      alpha.style.left =
+        "50%";
+
+      alpha.style.top =
+        "58%";
+
+
+      scene
+        .querySelectorAll(
+          ".aire-object-v3"
+        )
+        .forEach(e=>e.remove());
+
+
+      const ax =
+        Number(
+          s.position?.[0] || 0
+        );
+
+      const ay =
+        Number(
+          s.position?.[1] || 0
+        );
+
+      const az =
+        Number(
+          s.position?.[2] || 0
+        );
+
+
+      /*
+       * Échelle volontairement faible.
+       * Cela permet de garder plusieurs objets
+       * visibles sans créer un monde lourd.
+       */
+
+      const scale =
+        0.42;
+
+
+      (s.objects || [])
+      .forEach(o=>{
+
+        const ox =
+          Number(o.x || 0);
+
+        const oy =
+          Number(o.y || 0);
+
+        const oz =
+          Number(o.z || 0);
+
+
+        /*
+         * Position de l'objet RELATIVE à Alpha.
+         *
+         * Si Alpha avance :
+         * le monde recule visuellement.
+         */
+
+        const dx =
+          (ox - ax) * scale;
+
+        const dy =
+          (ay - oy) * scale;
+
+
+        const x =
+          50 + dx;
+
+        const y =
+          50 + dy * 0.62;
+
+
+        if(
+          x < -15 ||
+          x > 115 ||
+          y < -10 ||
+          y > 110
+        )
+          return;
+
+
+        const object =
+          document.createElement("div");
+
+        object.className =
+          "aire-object-v3";
+
+
+        object.style.left =
+          x + "%";
+
+        object.style.top =
+          y + "%";
+
+
+        /*
+         * Petite variation de profondeur
+         * basée sur Z.
+         */
+
+        const depth =
+          Math.max(
+            0.72,
+            Math.min(
+              1.18,
+              1 +
+              (oz - az) *
+              0.00025
+            )
+          );
+
+
+        object.style.transform =
+          "translate(-50%,-50%) " +
+          "rotate(45deg) " +
+          "scale(" +
+          depth +
+          ")";
+
+
+        scene.appendChild(
+          object
+        );
+      });
+
+
+      /*
+       * Mouvement subtil du décor.
+       * Alpha reste fixe.
+       */
+
+      const cameraX =
+        Math.max(
+          -8,
+          Math.min(
+            8,
+            -ax * 0.004
+          )
+        );
+
+      const cameraY =
+        Math.max(
+          -6,
+          Math.min(
+            6,
+            ay * 0.003
+          )
+        );
+
+
+      scene.style.transform =
+        "perspective(520px) " +
+        "rotateX(48deg) " +
+        "scale(1.05) " +
+        "translate(" +
+        cameraX +
+        "%," +
+        cameraY +
+        "%)";
+
+
+      /* État lumineux du casque */
+
+      const action =
+        String(
+          s.action || ""
+        ).toLowerCase();
+
+      const fatigue =
+        Number(
+          s.physiology?.fatigue || 0
+        ) * 100;
+
+      const douleur =
+        Number(
+          s.physiology?.pain || 0
+        ) * 100;
+
+
+      alpha.classList.remove(
+        "alert",
+        "tired",
+        "action"
+      );
+
+
+      if(douleur > 20){
+
+        alpha.classList.add(
+          "alert"
+        );
+
+      }else if(fatigue > 50){
+
+        alpha.classList.add(
+          "tired"
+        );
+
+      }else if(
+        /move|grasp|push|release|intake/
+        .test(action)
+      ){
+
+        alpha.classList.add(
+          "action"
+        );
+      }
+
+
+      /* Action affichée en français */
+
+      const actionBox =
+        document.getElementById(
+          "action"
+        );
+
+      if(actionBox){
+
+        actionBox.textContent =
+          traduireAction(
+            s.action
+          );
+      }
+
+
+      traduireCommandes();
+
+
+      /*
+       * Position réelle toujours visible
+       * dans les données du monde.
+       */
+
+      const pos =
+        document.getElementById(
+          "position"
+        );
+
+      if(pos){
+
+        pos.title =
+          "Position réelle d'Alpha : " +
+          ax.toFixed(3) +
+          " / " +
+          ay.toFixed(3) +
+          " / " +
+          az.toFixed(3);
+      }
+    };
+
+
+  /* ------------------------------------------------------------
+     On garde le moteur de simulation intact.
+     On ne modifie que son affichage.
+     ------------------------------------------------------------ */
+
+  console.log(
+    "AIRE : environnement V3 + caméra Alpha active"
+  );
+
+})();
