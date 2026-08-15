@@ -160,7 +160,7 @@ function init(){
   world.innerHTML="";
   world.appendChild(Object.assign(document.createElement("div"),{id:"aire-ground"}));
 
-  const a=document.createElement("div");
+  let a=document.createElement("div");
   a.id="aire-alpha";
   a.innerHTML=
     '<div class="head"></div>'+
@@ -169,7 +169,7 @@ function init(){
     '<i class="l2"></i><i class="r2"></i>';
   world.appendChild(a);
 
-  const label=document.createElement("div");
+  let label=document.createElement("div");
   label.id="aire-alpha-label";
   label.textContent="ALPHA";
   world.appendChild(label);
@@ -281,14 +281,49 @@ function init(){
     if(e)e.innerHTML="<b>"+state+"</b> · état dérivé des valeurs de simulation";
   }
 
-  const observer=new MutationObserver(()=>{
-    if(!window.__aireV2Timer){
-      window.__aireV2Timer=setTimeout(()=>{
-        window.__aireV2Timer=0;
-        update();
-      },150);
-    }
-  });
+  function ensureWorldVisual(){
+
+  const w=document.getElementById("world");
+  if(!w)return;
+
+  if(!document.getElementById("aire-alpha")){
+
+    a=document.createElement("div");
+    a.id="aire-alpha";
+
+    a.innerHTML=
+      '<div class="head"></div>'+
+      '<div class="body"></div>'+
+      '<i class="l1"></i><i class="r1"></i>'+
+      '<i class="l2"></i><i class="r2"></i>';
+
+    w.appendChild(a);
+  }
+
+  if(!document.getElementById("aire-alpha-label")){
+
+    label=document.createElement("div");
+    label.id="aire-alpha-label";
+    label.textContent="ALPHA";
+
+    w.appendChild(label);
+  }
+}
+
+const observer=new MutationObserver(()=>{
+
+  ensureWorldVisual();
+
+  if(!window.__aireV2Timer){
+
+    window.__aireV2Timer=setTimeout(()=>{
+
+      window.__aireV2Timer=0;
+      update();
+
+    },150);
+  }
+});
 
   observer.observe(document.body,{
     subtree:true,
