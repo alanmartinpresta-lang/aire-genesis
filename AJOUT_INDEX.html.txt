@@ -1,0 +1,2 @@
+<!-- AIRE Genesis — add this immediately before </body> in index.html -->
+<script src="ui_patch_moniteur_v1.js"></script>
