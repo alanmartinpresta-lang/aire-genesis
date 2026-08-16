@@ -1111,6 +1111,10 @@
 
   function tick(t) {
 
+if (window.__AIRE_SIM_PAUSED__) {
+  requestAnimationFrame(tick);
+  return;
+}     
     const dt =
       Math.min(
         0.1,
