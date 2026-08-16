@@ -885,6 +885,10 @@
 
   function render(t) {
 
+ if (window.__AIRE_SIM_PAUSED__) {
+  requestAnimationFrame(render);
+  return;
+}  
     parsePosition();
 
     const now =
